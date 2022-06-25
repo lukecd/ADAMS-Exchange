@@ -86,6 +86,12 @@ const Navbar = () => {
                 <li>
                 <ConnectButton />
                 </li>
+                <li className='mt-8'>
+                <a className="underline" href="https://www.linkedin.com/in/lukecd/" target="_blank" rel="noreferrer">LinkedIn</a> |&nbsp; 
+                <a className="underline" href="https://twitter.com/spaceagente" target="_blank" rel="noreferrer">Twitter</a> |&nbsp; 
+                <a className="underline" href="https://www.instagram.com/lukecd/" target="_blank" rel="noreferrer">Instagram</a> |&nbsp; 
+                <a className="underline" href="https://github.com/lukecd" target="_blank" rel="noreferrer">GitHub</a>
+                </li>
             </ul>
             {/* social */}
             <div className='hidden'></div>
