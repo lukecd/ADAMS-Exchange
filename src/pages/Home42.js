@@ -15,7 +15,7 @@ const Home42 = () => {
 
     return (
         <div className='mt-[90px] w-screen h-screen text-white'>
-            <div className='ml-10 mr-10 mt-20 flex flex-col justify-start items-start'>
+            <div className='ml-2 mr-2 mt-20 flex flex-col justify-start items-start'>
 
                 <div className='mt-20 w-full h-full'>
     

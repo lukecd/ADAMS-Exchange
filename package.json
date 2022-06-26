@@ -6,6 +6,7 @@
     "@arwes/core": "^1.0.0-alpha.19",
     "@emotion/css": "^11.9.0",
     "@emotion/react": "^11.9.3",
+    "@headlessui/react": "^1.6.5",
     "@rainbow-me/rainbowkit": "^0.3.4",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",

@@ -60,7 +60,7 @@ const AdamsSwap = () => {
                             <>GOR</>
                           )}   
                           </h1>
-                          <input type="number" value={token1} onChange={(e) => setToken1(e.target.value)} className="appearance-none border-[#d31a83] w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" />
+                          <input type="number" value={token1} onChange={(e) => setToken1(e.target.value)} className="appearance-none border-[#d31a83] w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none disabled" />
                         </div>
                         
                         <div className="flex flex-row justify-end ">

@@ -32,3 +32,4 @@ Then I started working with it and realized it's really super fast and lots of f
 - Planet illustrations from https://www.freepik.com/free-vector/set-fantastic-planets-asteroids-cosmic-objects_20576153.htm
 - Orbial math used in p5 animation from https://codereview.stackexchange.com/questions/211796/basic-orbiting-planets-in-p5-js
 - Wallet connect https://rainbowkit.com/
+- CSS stars https://www.youtube.com/watch?v=aywzn9cf-_U

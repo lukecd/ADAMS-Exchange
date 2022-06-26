@@ -49,7 +49,7 @@ const Navbar = () => {
                 </li>
             </ul>
             <div className='hidden lg:flex mr-10'>
-                <ConnectButton />
+                <ConnectButton showBalance={false}/>
             </div>
             {/* hamburger */}
             <div onClick={handleClick} className='lg:hidden z-10 mr-10'>
@@ -84,11 +84,11 @@ const Navbar = () => {
                     </Link>
                 </li>
                 <li>
-                <ConnectButton />
+                <ConnectButton showBalance={false}/>
                 </li>
                 <li className='mt-8'>
-                <a className="underline" href="https://www.linkedin.com/in/lukecd/" target="_blank" rel="noreferrer">LinkedIn</a> |&nbsp; 
-                <a className="underline" href="https://twitter.com/spaceagente" target="_blank" rel="noreferrer">Twitter</a> |&nbsp; 
+                <a className="underline" href="https://www.linkedin.com/in/lukecd/" target="_blank" rel="noreferrer">LinkedIn</a> &nbsp;|&nbsp; 
+                <a className="underline" href="https://twitter.com/spaceagente" target="_blank" rel="noreferrer">Twitter</a> &nbsp;|&nbsp; 
                 <a className="underline" href="https://www.instagram.com/lukecd/" target="_blank" rel="noreferrer">Instagram</a> |&nbsp; 
                 <a className="underline" href="https://github.com/lukecd" target="_blank" rel="noreferrer">GitHub</a>
                 </li>

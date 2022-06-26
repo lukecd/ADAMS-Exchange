@@ -52,7 +52,7 @@ function sketch(p) {
         p.frameRate(144);
     
         sun.x = p.windowWidth / 2;
-        sun.y = p.windowHeight * .8
+        sun.y = p.windowHeight * .7
         
         //sun.x = p.windowWidth * .5;
         //sun.y = p.windowHeight * .8;
