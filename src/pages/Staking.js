@@ -22,7 +22,7 @@ const Staking = () => {
 
     return (
       <div className='mt-[90px] w-screen h-screen text-white'>
-        <div className='ml-10 mr-10 mt-40 flex flex-col justify-start items-start'>
+            <div className='ml-2 mr-2 mt-20 flex flex-col justify-start items-start'>
 
             <div className='mt-20 w-full h-full'>
               <div className='lg:pr-40 lg:pl-40 md:pr-20 md:pl-20 text-left pb-2 pl-4 border-[#d31a83]'>
