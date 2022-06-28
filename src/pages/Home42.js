@@ -19,7 +19,7 @@ const Home42 = () => {
 
                 <div className='mt-20 w-full h-full'>
     
-                        <div className='lg:pr-40 lg:pl-40 md:pr-20 md:pl-20 text-left pb-2 pl-4 border-[#d31a83]'>
+                        <div className='lg:pr-40 lg:pl-40 md:pr-20 md:pl-20 text-left pb-2 border-[#d31a83]'>
                             <h1 className='text-4xl leading-10 font-bold inline underline decoration-[#d31a83]'>Adams Coin ...</h1>
                             
                         <h2 className='text-center mt-2 text-1xl font-bold opacity-80 bg-white text-black'>
@@ -35,7 +35,7 @@ const Home42 = () => {
                             <div className="w-full mr-3 mt-3 leading-6 bg-white text-black opacity-80">
                                 <ol className='mt-2 list-decimal ml-9 '>
                                 <li>The contract owner can never win.</li>
-                                <li>10 % of the time, there is a non-weighted distribution. Each wallet has an equal chance of winning, regardless of their token balance.</li>
+                                <li>10% of the time, there is a non-weighted distribution. Each wallet has an equal chance of winning, regardless of their token balance.</li>
                                 <li>90% of the time there is a weighted distribution. Each token owned increases your chance of winning.</li>
                                 </ol>
                             </div>

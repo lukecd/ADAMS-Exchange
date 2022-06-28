@@ -25,7 +25,7 @@ const Staking = () => {
             <div className='ml-2 mr-2 mt-20 flex flex-col justify-start items-start'>
 
             <div className='mt-20 w-full h-full'>
-              <div className='lg:pr-40 lg:pl-40 md:pr-20 md:pl-20 text-left pb-2 pl-4 border-[#d31a83]'>
+              <div className='lg:pr-40 lg:pl-40 md:pr-20 md:pl-20 text-left pb-2 border-[#d31a83]'>
                     <h1 className='text-4xl leading-10 font-bold inline underline decoration-[#d31a83]'>Staking!</h1>
                 
                 <h2 className='text-center mt-2 text-1xl font-bold opacity-80 bg-white text-black'>

@@ -2,28 +2,31 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useAccount, useContract, useProvider, useSigner } from "wagmi";
 import { ethers } from "ethers";
 import Social from "../components/Social";
-import Disclaimer from "../components/Disclaimer";
 import { ArwesThemeProvider, Table, Text, Button, FrameBox } from '@arwes/core';
   
 import adamsCoinABI from '../abi/AdamsCoin.json';
 
-const ClaimRewards = () => {
-    const adamsCoinAddress = '0x87e128c6cD8Ffa3d8409187DE25CaBCaac1e2EF5';
-    const [rewardsAvailable, setRewardsAvailable] = useState('');
+import ConnectWalletModal from "../components/ConnectWalletModal";
+import GeneralModal from "../components/GeneralModal";
 
-    // provider for checking if user has claimed rewards
-    const provider = useProvider();
-    console.log("ClaimRewards provider ", provider);
+const ClaimRewards = () => {
+    const [rewardsAvailable, setRewardsAvailable] = useState(0);
+    const [hasRewardsAvailable, setHasRewardsAvailable] = useState(false);
+    const [awardAddresses, setAwardAddresses] = useState([]);
+    const [awardAmounts, setAwardAmounts] = useState([]);
+
+    // coin provider for checking rewards
+    const coinProvider = useProvider();
     const adamsCoinContractProvider = useContract({
-      addressOrName: adamsCoinAddress,
+      addressOrName: window.$adams_coin_contract,
       contractInterface: adamsCoinABI,
-      signerOrProvider: provider,
+      signerOrProvider: coinProvider,
     });
 
-    // signer for claiming rewards
     const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
+    // coin signer for approving claim rewards transactions
     const adamsCoinContractSigner = useContract({
-      addressOrName: adamsCoinAddress,
+      addressOrName: window.$adams_coin_contract,
       contractInterface: adamsCoinABI,
       signerOrProvider: signer,
     });
@@ -35,31 +38,63 @@ const ClaimRewards = () => {
         .catch(error => console.log(error));
     }
 
-    // checks if user has rewards available for claiming
+    // called on page load
+    useEffect(() => {
+      // check if user has claimed rewards
+      const checkHasRewards = async () => {
+        await checkContractHasRewards()
+          .then( returnValue => {setRewardsAvailable(returnValue); setHasRewardsAvailable(returnValue != 0)})
+          .catch(error => {setRewardsAvailable(0); console.log(error)});
+      };
+      checkHasRewards();
+
+      // set all available rewards as state variables
+      const setAvailableRewards = async () => {
+        await setAvailbleRewardsAsState()
+          .then()
+          .catch(error => {setRewardsAvailable(0); console.log(error)});
+      };
+      setAvailableRewards();
+
+    }, []);
+
+    /**
+     * 
+     * @returns true / false indicating if the logged in user has rewards availble for claiming
+     */
     const checkContractHasRewards = async() => {
-      let rewardsAvailable = await adamsCoinContractProvider.checkRewards('0xcb082454a4D41cc44F031600A5F3bc00Ae66Fc6f');
+      let rewardsAvailable = await adamsCoinContractProvider.checkRewards();
       console.log("rewardsAvailable ", rewardsAvailable);
       rewardsAvailable = ethers.utils.formatEther(rewardsAvailable);
       console.log("rewardsAvailable ", rewardsAvailable);
       return rewardsAvailable;
     }
 
-    useEffect(() => {
-      console.log("check if user has claimed rewards");
-      const checker = async () => {
-        await checkContractHasRewards()
-          .then( returnValue => {setRewardsAvailable(returnValue); console.log("checked if has rewards ", returnValue)})
-          .catch(error => {setRewardsAvailable(0); console.log(error)});
-      };
-      checker();
-    }, []);
+    /**
+     * Queries the blockchain for available rewards and sets as state variables
+     * The contract returns two parallel arrays, one containing the addresses of 
+     * all wallets with rewards and one containing the awards
+     */
+    const setAvailbleRewardsAsState = async () => {
+      const getAllAvailableRewards = await adamsCoinContractProvider.getAllAvailableRewards();
+      const {0: addresses, 1: rewards} = getAllAvailableRewards;
+      // just set the addresses, they're basically strings
+      setAwardAddresses(addresses);
+      // award amounts are big numbers, need to convert first
+      let covertedAwards = [];
+      for(let i=0; i<rewards.length; i++) {
+        covertedAwards.push(ethers.utils.formatEther(rewards[i]));
+      }
+      console.log("covertedAwards", covertedAwards);
+      setAwardAmounts(covertedAwards);
+    }
 
     return (
           <div className='mt-[90px] w-screen h-screen text-white'>
             <div className='ml-2 mr-2 mt-20 flex flex-col justify-start items-start'>
 
                 <div className='mt-20 w-full h-full'>
-                  <div className='lg:pr-40 lg:pl-40 md:pr-20 md:pl-20 text-left pb-2 pl-4 border-[#d31a83]'>
+                  <div className='lg:pr-40 lg:pl-40 md:pr-20 md:pl-20 text-left pb-2 border-[#d31a83]'>
                         <h1 className='text-4xl leading-10 font-bold inline underline decoration-[#d31a83]'>Rewards!</h1>
                     
                     <h2 className='text-center mt-2 text-1xl font-bold opacity-80 bg-white text-black'>
@@ -69,21 +104,51 @@ const ClaimRewards = () => {
 
                   <div className='pt:10 mt-3 lg:pr-40 lg:pl-40 md:pr-20 md:pl-20 '>
                       <p className='bg-white text-black font-bold opacity-80 text-center'>
-                        You currently have ____ rewards available for claiming.
-                        /
-                        You haven't earned any rewards yet. Try grabbing some <a className="underline decoration-[#d31a83]" href="https://goerlifaucet.com/" rel="noreferrer" target="_blank">Goerli ETH</a> and swapping. 
+                        {hasRewardsAvailable && (
+                          <>
+                          You currently have {rewardsAvailable} rewards available for claiming.
+                          </>
+                        )}
+                         {!hasRewardsAvailable && (
+                          <>
+                          You haven't earned any rewards yet. Try grabbing some <a className="underline decoration-[#d31a83]" href="https://goerlifaucet.com/" rel="noreferrer" target="_blank">Goerli ETH</a> and swapping. 
+                          </>
+                        )}
+    
                       </p>
 
-                      <div className="w-full mr-3 mt-3 flex flex-row justify-end justify-items-end">
+                      <div className="w-full mt-3 flex flex-row justify-end justify-items-end">
                         <ArwesThemeProvider>
-                        
+                        {hasRewardsAvailable && (
                           <Button animator={{ animate: false }} onClick={claimRewards}>
                             <Text>Claim Rewards</Text>
                           </Button>
-        
+                        )}
                         </ArwesThemeProvider>
                       </div>
+                      <div className="w-full mt-3 flex flex-col justify-center justify-items-end">
+                      <p className='bg-white text-black font-bold opacity-80 text-center'>Unclaimed Rewards</p>
+                      <table className="bg-white text-black opacity-80 table-auto ">
+                        <thead>
+                          <tr>
+                            <th>Wallet</th>
+                            <th>Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                          
+                            {awardAddresses.map(address => <td>{address}</td>)}
+                            {awardAmounts.map(amount => <td>{amount}</td>)}
+                            
+                          </tr>
+       
+                        </tbody>
+                      </table>
                   </div>
+
+                  </div>
+
                 </div>
             </div>
             <Social />
