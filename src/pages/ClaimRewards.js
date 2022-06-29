@@ -15,6 +15,11 @@ const ClaimRewards = () => {
     const [awardAddresses, setAwardAddresses] = useState([]);
     const [awardAmounts, setAwardAmounts] = useState([]);
 
+    let [modalIsOpen, setModalIsOpen] = useState(false);
+    let [modalTitle, setModalTitle] = useState("");
+    let [modalDescription, setModalDescription] = useState("");
+    let [isCWOpen, setIsCWOpen] = useState(false);
+
     // coin provider for checking rewards
     const coinProvider = useProvider();
     const adamsCoinContractProvider = useContract({
@@ -90,6 +95,17 @@ const ClaimRewards = () => {
     }
 
     return (
+      <>
+      <ConnectWalletModal
+        open={isCWOpen}
+        onClose={setIsCWOpen}
+      />
+      <GeneralModal
+        open={modalIsOpen}
+        onClose={setModalIsOpen}
+        modalTitle={modalTitle}
+        modalDescription={modalDescription}
+      /> 
           <div className='mt-[90px] w-screen h-screen text-white'>
             <div className='ml-2 mr-2 mt-20 flex flex-col justify-start items-start'>
 
@@ -153,6 +169,7 @@ const ClaimRewards = () => {
             </div>
             <Social />
           </div> 
+      </>
     );
 };
 

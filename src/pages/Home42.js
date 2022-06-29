@@ -23,9 +23,10 @@ const Home42 = () => {
                             <h1 className='text-4xl leading-10 font-bold inline underline decoration-[#d31a83]'>Adams Coin ...</h1>
                             
                         <h2 className='text-center mt-2 text-1xl font-bold opacity-80 bg-white text-black'>
-                            If "42" is the answer to the “ultimate question of life, the universe, and everything, 
+                            If "42" is the answer to the “ultimate question of life, the universe, and everything," 
                             then perhaps the question is "what random and unexpected thing will happen to me today?". 
-                            In the spirit of Life, The Universe and Everything, here is Adams coin.  
+                            In the spirit of Douglas Adams' <a className="underline decoration-[#d31a83]" href="https://en.wikipedia.org/wiki/Life,_the_Universe_and_Everything" rel="noreferrer" target="_blank">Life, The Universe and Everything,</a> here is Adams coin.  
+                            
                         </h2>
                         </div>
  
