@@ -86,7 +86,7 @@ const Staking = () => {
       };
       checkContractTotal();
 
-      // figure out how many ADAMS we have approved the swap contract to use
+      // figure out if we've approved yet
       const checkAllowance = async () => {
       await checkStakingApproved()
         .then( returnValue => {setHasApproved(returnValue);})

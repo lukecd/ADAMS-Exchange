@@ -22,8 +22,10 @@ const AdamsSwap = () => {
     const [adamsBalanceContract, setAdamsBalanceContract] = useState(0);
     const [gorBalanceUser, setGorBalanceUser] = useState(0);
     const [adamsBalanceUser, setAdamsBalanceUser] = useState(0);
-    const [allowance, setAllowance] = useState(0);
-    const [needsApproval, setNeedsApproval] = useState(false);
+    const [hasApproved, setHasApproved] = useState(false);
+
+    const [ethPrice, setETHPrice] = useState(0);
+
 
     let [modalIsOpen, setModalIsOpen] = useState(false);
     let [modalTitle, setModalTitle] = useState("");
@@ -66,7 +68,9 @@ const AdamsSwap = () => {
       signerOrProvider: signer,
     });
 
-    // called on page load
+    // called on page load. 
+    // a lot happens, so i broke it all down into separate function calls to make it easier to read
+    // but now i'm wondering if i should move some of that into a utils file. 
     useEffect(() => {
       // set gor / adams balances held by swap contract
       const checkAdams = async () => {
@@ -101,16 +105,21 @@ const AdamsSwap = () => {
       if(swapGorToAdams) setToken0(gorBalanceUser);
       else setToken0(adamsBalanceUser);
 
-      // figure out how many ADAMS we have approved the swap contract to use
+      // figure out if we've approved yet
       const checkAllowance = async () => {
-        await getApprovedAdamsBalance()
-          .then( returnValue => {setAllowance(returnValue);})
+        await checkSwapApproved()
+          .then( returnValue => {setHasApproved(returnValue);})
+          .catch(error => console.log(error));
+        };
+        checkAllowance();  
+
+      // get the current ETH price so we can estimate current ADAMS price
+      const checkETH = async () => {
+        await getEthPrice()
+          .then( returnValue => {setETHPrice(returnValue);})
           .catch(error => console.log(error));
       };
-      checkAllowance();
-      if(allowance === 0) setNeedsApproval(true);
-      else if(allowance < adamsBalanceUser) setNeedsApproval(true);
-      console.log("set allowance ", allowance);
+      checkETH();    
     }, []);
 
     /**
@@ -177,6 +186,28 @@ const AdamsSwap = () => {
     }    
 
     /**
+     * 
+     * @returns True if user has approved the staking contract to access funds
+     */
+     const checkSwapApproved = async () => {
+      if(!signer) return false;
+      let approvedBalance = await adamsCoinContractProvider.allowance(signer._address, window.$adams_swap_contract);
+      approvedBalance = ethers.utils.formatEther(approvedBalance);
+      return approvedBalance > 0;
+    }
+
+    /**
+     * Queries the coingecko API to get ETH price, used to show ADAMS price in USD
+     */
+    const getEthPrice = async () => {
+      const queryURL = "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=USD";
+      const response = await fetch(queryURL);
+      let actualData = await response.json();
+
+      return actualData.ethereum.usd;
+    }
+
+    /**
      * Queries the swap contract to get the estiamted amount of GOR received 
      * after swapping the amount of ADAMS shown in the UI.
      * @param shouldFormat true to format the value into an easily readible format, false to leave as is
@@ -228,28 +259,6 @@ const AdamsSwap = () => {
           // first get estimated swap amount
           const adamsForGor = await getEstimatedGorForAdams(true);
           setToken1(adamsForGor);
-          
-          // double check the allowance
-          if(allowance === 0) {
-            const checkAllowance = async () => {
-              await getApprovedAdamsBalance()
-                .then( returnValue => {setAllowance(returnValue);})
-                .catch(error => console.log(error));
-            };
-            checkAllowance();           
-          }  
-
-          // see if token0 amount is covered by our approval amount
-console.log("setSwapResults allowance", allowance);
-console.log("setSwapResults token0", token0);
-console.log("setSwapResults document.getElementById(token0).value", document.getElementById("token0").value);
-
-          if(allowance === 0) setNeedsApproval(true);
-          else if(allowance < token0) {
-            setNeedsApproval(true);
-            console.log("setSwapResults set to true");
-          }
-          else setNeedsApproval(false);
         }
       }
     }
@@ -283,24 +292,14 @@ console.log("setSwapResults document.getElementById(token0).value", document.get
 
     /**
      * Approves the swap contract to access the tokens held by the user
-     * Or increases allowance
+     * NOTE: It seems like best practices are to just approve exactly what's needed
+     * BUT, seems like most DEXs do a large blanket appoval (ethers.constants.MaxUint256)... so I'm going that way.
      */
     const approve = async () => {
-       // first check if we have approved enough
-       if(allowance === 0) {
-        // covers the case when no approval has ever been done
-        // approve the full amount of ADAMS the wallet currently has
-        // TODO: check what best practices are
-        await adamsCoinContractSigner.approve(window.$adams_swap_contract, ethers.utils.parseEther(adamsBalanceUser));
-      }
-      else if(allowance < ethers.utils.parseEther(token0)) {
-        // allowance doesn't cover current spend, so ask for more
-        console.log("allowance1 ", allowance);
-        const amountToIncrease = ethers.utils.parseEther(token0).sub(ethers.utils.parseEther(allowance));
-        console.log("increasing1 by ", amountToIncrease);
-        //console.log("increasing2 by ", ethers.utils.formatEther(""+amountToIncrease));
-        await adamsCoinContractSigner.increaseAllowance(window.$adams_swap_contract, amountToIncrease);
-      }
+      console.log(`Approving ${window.$adams_staking_contract} to access ${ethers.constants.MaxUint256}`);
+      await adamsCoinContractSigner.approve(window.$adams_staking_contract, ethers.constants.MaxUint256)
+      .then( returnValue => {setHasApproved(true)();})
+      .catch(error => showModal("Umm ...", error.reason));
 
     }
 
@@ -325,9 +324,6 @@ console.log("setSwapResults document.getElementById(token0).value", document.get
       if(swapGorToAdams) {
         setToken0(adamsBalanceUser);
         // in this case, we need to check if we have approved enough yet
-        if(allowance === 0) setNeedsApproval(true);
-        else if(allowance < adamsBalanceUser) setNeedsApproval(true);
-        else setNeedsApproval(false);
       }
       else setToken0(gorBalanceUser);   
 
@@ -361,7 +357,9 @@ console.log("setSwapResults document.getElementById(token0).value", document.get
                     Swap <a className="underline decoration-[#d31a83]" href="https://goerlifaucet.com/" rel="noreferrer" target="_blank">Goerli ETH</a> for ADAMS, pay the tax and see who gets it. Maybe you'll get it, maybe someone else will.
                     Hold on to your ADAMS, the more you have, the better your chance of winning the tax is.
                     <p className="flex flex-row justify-end text-sm mr-2 mt-2">Swap GOR Balance: {gorBalanceContract}</p>
-                    <p className="flex flex-row justify-end text-sm mr-2">Swap ADAMS Balance: {adamsBalanceContract}</p>                 
+                    <p className="flex flex-row justify-end text-sm mr-2">Swap ADAMS Balance: {adamsBalanceContract}</p>  
+                    <p className="flex flex-row justify-end text-sm mr-2">1 ADAMS = {gorBalanceContract / adamsBalanceContract} GOR</p>                                    
+                    <p className="flex flex-row justify-end text-sm mr-2">1 ADAMS = {(gorBalanceContract / adamsBalanceContract) * ethPrice} USD</p>                                    
                   </h2>
                 </div>
 
@@ -401,12 +399,12 @@ console.log("setSwapResults document.getElementById(token0).value", document.get
                               <Text>Swap</Text>
                               </Button>
                             )}
-                            {!swapGorToAdams && needsApproval && (
+                            {!swapGorToAdams && hasApproved && (
                               <Button animator={{ animate: false }} onClick={approve}>
                               <Text>Approve</Text>
                               </Button>
                             )}
-                            {!swapGorToAdams && !needsApproval && (
+                            {!swapGorToAdams && !hasApproved && (
                               <Button animator={{ animate: false }} onClick={swap}>
                               <Text>Swap</Text>
                               </Button>
