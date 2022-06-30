@@ -128,21 +128,11 @@ const AdamsSwap = () => {
      * @param {*} reason Details of the modal
      */
      const showModal = async (title, reason) => {
+      console.log("showModal ", reason);
       setModalTitle(title);
-      reason = reason.replace("execution reverted: ", "");
+      if(reason.indexOf("execution reverted") !== -1) reason = reason.replace("execution reverted: ", "");
       setModalDescription(reason);
       setModalIsOpen(true);
-    }
-
-    /**
-     * 
-     * @returns The amount of ADAMS tokens approved by user for the swap contract to access
-     */
-    const getApprovedAdamsBalance = async () => {
-      if(!signer) return 0;
-      let approvedBalance = await adamsCoinContractProvider.allowance(signer._address, window.$adams_swap_contract);
-      approvedBalance = ethers.utils.formatEther(approvedBalance);
-      return approvedBalance;
     }
 
     /**
@@ -193,6 +183,7 @@ const AdamsSwap = () => {
       if(!signer) return false;
       let approvedBalance = await adamsCoinContractProvider.allowance(signer._address, window.$adams_swap_contract);
       approvedBalance = ethers.utils.formatEther(approvedBalance);
+      console.log("approvedBalance ", approvedBalance)
       return approvedBalance > 0;
     }
 
@@ -276,7 +267,7 @@ const AdamsSwap = () => {
       if(swapGorToAdams) {
         const amountOfTokens = await getEstimatedAdamsForGor(false);
         await adamsSwapContractSigner.ethToAdams(amountOfTokens, { value: ethers.utils.parseEther(token0) })
-        .then( returnValue => {showModal("Success", `Check your wallet, if you don't see it, make sure to add the contract ${window.$adams_coin_contract}`)})
+        .then( returnValue => {console.log("swap success ", returnValue)})
         .catch(error => showModal("Umm ...", error.reason))
       }
       else {
@@ -297,8 +288,8 @@ const AdamsSwap = () => {
      */
     const approve = async () => {
       console.log(`Approving ${window.$adams_staking_contract} to access ${ethers.constants.MaxUint256}`);
-      await adamsCoinContractSigner.approve(window.$adams_staking_contract, ethers.constants.MaxUint256)
-      .then( returnValue => {setHasApproved(true)();})
+      await adamsCoinContractSigner.approve(window.$adams_swap_contract, ethers.constants.MaxUint256)
+      .then( returnValue => {console.log("approve ", returnValue); setHasApproved(true)();})
       .catch(error => showModal("Umm ...", error.reason));
 
     }
@@ -399,12 +390,12 @@ const AdamsSwap = () => {
                               <Text>Swap</Text>
                               </Button>
                             )}
-                            {!swapGorToAdams && hasApproved && (
+                            {!swapGorToAdams && !hasApproved && (
                               <Button animator={{ animate: false }} onClick={approve}>
                               <Text>Approve</Text>
                               </Button>
                             )}
-                            {!swapGorToAdams && !hasApproved && (
+                            {!swapGorToAdams && hasApproved && (
                               <Button animator={{ animate: false }} onClick={swap}>
                               <Text>Swap</Text>
                               </Button>

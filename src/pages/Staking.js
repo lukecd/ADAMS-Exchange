@@ -89,7 +89,7 @@ const Staking = () => {
       // figure out if we've approved yet
       const checkAllowance = async () => {
       await checkStakingApproved()
-        .then( returnValue => {setHasApproved(returnValue);})
+        .then( returnValue => {console.log("checkStakingApproved ", returnValue); setHasApproved(returnValue);})
         .catch(error => console.log(error));
       };
       checkAllowance();     
@@ -161,6 +161,21 @@ const Staking = () => {
     }
 
     /**
+     * Main function. Withdraws all.
+     */
+    const withdraw = async () => {
+      if(!signer) {
+        setIsCWOpen(true);
+      }
+      else {
+        // talk to contract
+        await adamsStakingContractSigner.withdraw()
+          .then( returnValue => {checkWalletADAMSBalance();})
+          .catch(error => showModal("Umm ...", error.reason))
+      }
+    }
+
+    /**
      * 
      * @returns True if user has approved the staking contract to access funds
      */
@@ -168,6 +183,9 @@ const Staking = () => {
       if(!signer) return false;
       let approvedBalance = await adamsCoinContractProvider.allowance(signer._address, window.$adams_staking_contract);
       approvedBalance = ethers.utils.formatEther(approvedBalance);
+      
+      console.log("approvedBalance ", approvedBalance);
+      console.log("signer._address ", signer._address);
       return approvedBalance > 0;
     }
 
@@ -190,7 +208,7 @@ const Staking = () => {
      */
       const showModal = async (title, reason) => {
         setModalTitle(title);
-        reason = reason.replace("execution reverted: ", "");
+        //reason = reason.replace("execution reverted: ", "");
         setModalDescription(reason);
         setModalIsOpen(true);
       }   
@@ -235,7 +253,6 @@ const Staking = () => {
                   </p>
                   <div className="w-full mr-3 mt-3 flex flex-row justify-end justify-items-end">
                     <ArwesThemeProvider>
-
                       <div className="flex items-center border-b border-teal-500 py-2">
                       <input type="number" value={amountToStake} onChange={(e) => setAmountToStake(e.target.value)} className="appearance-none border-[#d31a83] w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" />
                       { !hasApproved && (
@@ -244,13 +261,29 @@ const Staking = () => {
                         </Button>
                       )}
                       { hasApproved && (
+                        <>
                         <Button animator={{ animate: false }} onClick={stake}>
                         <Text>Stake</Text>
                         </Button>
+                        </>
                       )}
 
                       </div>
+                    </ArwesThemeProvider>
+                  </div>
+                  <div className="w-full mr-3 mt-3 flex flex-row justify-end justify-items-end">
+                    <ArwesThemeProvider>
+                      <div className="flex items-center border-b border-teal-500 py-2">
+                  
+                      { hasApproved && (
+                        <>
+                        <Button animator={{ animate: false }} onClick={withdraw}>
+                        <Text>Withdraw</Text>
+                        </Button>
+                        </>
+                      )}
 
+                      </div>
                     </ArwesThemeProvider>
                   </div>
               </div>

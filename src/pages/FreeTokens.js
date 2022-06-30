@@ -99,7 +99,7 @@ const FreeTokens = () => {
         contractInterface: adamsVaultABI,
       },
       'VaultDistribution',
-      (event) => console.log('VaultDistribution', event),
+      (event) => console.log('VaultDistribution ', event),
     )
     
     /**
