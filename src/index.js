@@ -49,10 +49,11 @@ const { chains, provider } = configureChains(
   
 
 // global variables
-window.$adams_coin_contract = "0xb5455A9E91C1ad7399ce61a4F67fD8a2169D15B8";
-window.$adams_staking_contract = "0x097DB7b652Ae68E181Dc695c102295619a0a4462";
-window.$adams_vault_contract = "0xD4d355A8C62196C73dd198370f8c97dC751D0F45";
-window.$adams_swap_contract = "0x7990427bbe58A8Aeb00FD38a16Ad15B441709E76";
+window.$adams_coin_contract = "0xeeD0Fd6c84532E8c72d1c4E76548DFB5396d56B0";
+window.$adams_staking_contract = "0x79a75653c913E822E4e98211759a10541a0C4a37";
+window.$adams_vault_contract = "0x7b77957dDFa5563F8851A9399E45017a41514F7E";
+window.$adams_swap_contract = "0x93CF3859A8c731C3C63b481C256B35E575700494";
+
 
 ReactDOM.render(
     <WagmiConfig client={wagmiClient}>
