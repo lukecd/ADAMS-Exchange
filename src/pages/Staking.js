@@ -197,7 +197,7 @@ const Staking = () => {
     const approveAccess = async () => {
       console.log(`Approving ${window.$adams_staking_contract} to access ${ethers.constants.MaxUint256}`);
       await adamsCoinContractSigner.approve(window.$adams_staking_contract, ethers.constants.MaxUint256)
-      .then( returnValue => {setHasApproved(true)();})
+      .then( returnValue => {setHasApproved(true);})
       .catch(error => showModal("Umm ...", error.reason));
     }
 

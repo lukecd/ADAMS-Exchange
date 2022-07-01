@@ -49,10 +49,11 @@ const { chains, provider } = configureChains(
   
 
 // global variables
-window.$adams_coin_contract = "0xb37C634bB7877Ce22c729Ff37075Eb18F42879f9";
-window.$adams_staking_contract = "0x3ab6FcF1B4A87Dd246d6f75D6594B77EAA1fcAAC";
-window.$adams_vault_contract = "0x725e78299d62bf230FD6BC3e0324C67119b6B503";
-window.$adams_swap_contract = "0xC2A2150219148bC394cAA81Dc3e1e80e20c116Bc";
+window.$adams_coin_contract = "0x77C386214a55C7eCD34468a0698AC3Ab222D9d40";
+window.$adams_staking_contract = "0x9719Ed7B6f6f595b49588f2dbc0520EA12782583";
+window.$adams_vault_contract = "0x558456e261597455b54c38197B8ea2aEb3E6688B";
+window.$adams_swap_contract = "0x9279CCb454F22C91B258F056DD20b3fAaE8A4378";
+
 
 
 ReactDOM.render(

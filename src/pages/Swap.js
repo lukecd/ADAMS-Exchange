@@ -130,7 +130,7 @@ const AdamsSwap = () => {
      const showModal = async (title, reason) => {
       console.log("showModal ", reason);
       setModalTitle(title);
-      if(reason.indexOf("execution reverted") !== -1) reason = reason.replace("execution reverted: ", "");
+      //if(reason.indexOf("execution reverted") !== -1) reason = reason.replace("execution reverted: ", "");
       setModalDescription(reason);
       setModalIsOpen(true);
     }
@@ -177,7 +177,7 @@ const AdamsSwap = () => {
 
     /**
      * 
-     * @returns True if user has approved the staking contract to access funds
+     * @returns True if user has approved the swap contract to access funds
      */
      const checkSwapApproved = async () => {
       if(!signer) return false;
@@ -271,12 +271,14 @@ const AdamsSwap = () => {
         .catch(error => showModal("Umm ...", error.reason))
       }
       else {
- 
         // then swap
         const amountOfTokens = await getEstimatedGorForAdams(false);
+        console.log("SWAP adamsForGor amountOfTokens", ethers.utils.formatEther(amountOfTokens)); 
+        console.log("SWAP adamsForGor token0", token0); 
+        console.log("SWAP adamsForGor adamsSwapContractSigner", adamsSwapContractSigner); 
 
         await adamsSwapContractSigner.adamsToEth(ethers.utils.parseEther(token0), amountOfTokens)
-        .then( returnValue => {showModal("Success", `Check your wallet.`)})
+        .then( returnValue => {console.log("swap success ", returnValue)})
         .catch(error => showModal("Umm ...", error.reason))
       }
     }
@@ -289,7 +291,7 @@ const AdamsSwap = () => {
     const approve = async () => {
       console.log(`Approving ${window.$adams_staking_contract} to access ${ethers.constants.MaxUint256}`);
       await adamsCoinContractSigner.approve(window.$adams_swap_contract, ethers.constants.MaxUint256)
-      .then( returnValue => {console.log("approve ", returnValue); setHasApproved(true)();})
+      .then( returnValue => {setHasApproved(true)})
       .catch(error => showModal("Umm ...", error.reason));
 
     }

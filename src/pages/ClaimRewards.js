@@ -36,9 +36,13 @@ const ClaimRewards = () => {
       signerOrProvider: signer,
     });
 
+    /**
+     * @notice Main function for this page, claims all available rewards.
+     */
     const claimRewards = async () => {
+      console.log("claimRewards");
       // talk to contract
-      await adamsCoinContractSigner.claimRewards()
+      await adamsCoinContractSigner.claimRewards({gasLimit: 100000})
         .then( returnValue => {setRewardsAvailable(0)})
         .catch(error => console.log(error));
     }
@@ -68,7 +72,8 @@ const ClaimRewards = () => {
      * @returns true / false indicating if the logged in user has rewards availble for claiming
      */
     const checkContractHasRewards = async() => {
-      let rewardsAvailable = await adamsCoinContractProvider.checkRewards();
+      console.log("rewardsAvailable ", signer._address);
+      let rewardsAvailable = await adamsCoinContractSigner.checkRewards();
       console.log("rewardsAvailable ", rewardsAvailable);
       rewardsAvailable = ethers.utils.formatEther(rewardsAvailable);
       console.log("rewardsAvailable ", rewardsAvailable);
@@ -152,13 +157,7 @@ const ClaimRewards = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                          
-                            {awardAddresses.map(address => <td>{address}</td>)}
-                            {awardAmounts.map(amount => <td>{amount}</td>)}
-                            
-                          </tr>
-       
+                            {awardAddresses.map((address, i) => <tr><td>{address}</td><td>{awardAmounts[i]}</td></tr>)}
                         </tbody>
                       </table>
                   </div>
