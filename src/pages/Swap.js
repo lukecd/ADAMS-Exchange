@@ -266,7 +266,7 @@ const AdamsSwap = () => {
       }
       if(swapGorToAdams) {
         const amountOfTokens = await getEstimatedAdamsForGor(false);
-        await adamsSwapContractSigner.ethToAdams(amountOfTokens, { value: ethers.utils.parseEther(token0) })
+        await adamsSwapContractSigner.ethToAdams(amountOfTokens, { value: ethers.utils.parseEther(token0), gasLimit: 100000 })
         .then( returnValue => {console.log("swap success ", returnValue)})
         .catch(error => showModal("Umm ...", error.reason))
       }
@@ -277,7 +277,7 @@ const AdamsSwap = () => {
         console.log("SWAP adamsForGor token0", token0); 
         console.log("SWAP adamsForGor adamsSwapContractSigner", adamsSwapContractSigner); 
 
-        await adamsSwapContractSigner.adamsToEth(ethers.utils.parseEther(token0), amountOfTokens)
+        await adamsSwapContractSigner.adamsToEth(ethers.utils.parseEther(token0), amountOfTokens, {gasLimit: 100000})
         .then( returnValue => {console.log("swap success ", returnValue)})
         .catch(error => showModal("Umm ...", error.reason))
       }
