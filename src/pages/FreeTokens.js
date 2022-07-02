@@ -138,13 +138,16 @@ const FreeTokens = () => {
                         <>
                         ADAMS is more fun when more people have it.
                         Want some free coins? Connect your wallet and click below for 4,200 free coins. 
-                        <p className="flex flex-row justify-end text-sm mr-2">Vault Balance: {vaultReserve}</p>
+                        <p className="flex flex-row justify-end text-sm mr-2 mt-2">Vault Balance: {vaultReserve}</p>
+                        <p className="flex flex-row justify-end text-sm mr-2">ADAMS Coin Contract: {window.$adams_coin_contract}</p>
                         </>
                       )}
                         {hasClaimed && (
                         <>
                         You've already claimed your tokens. Did you run out? Want some more? Grab some free <a className="underline decoration-[#d31a83]" href="https://goerlifaucet.com/" rel="noreferrer" target="_blank">Goerli ETH</a> and swap for ADAMS.
-                        </>
+                        <p className="flex flex-row justify-end text-sm mr-2 mt-2">Vault Balance: {vaultReserve}</p>
+                        <p className="flex flex-row justify-end text-sm mr-2">ADAMS Coin Contract: {window.$adams_coin_contract}</p>
+                       </>
                       )}                    
                       
                     </h2>

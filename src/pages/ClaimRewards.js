@@ -43,7 +43,7 @@ const ClaimRewards = () => {
       console.log("claimRewards");
       // talk to contract
       await adamsCoinContractSigner.claimRewards({gasLimit: 100000})
-        .then( returnValue => {setRewardsAvailable(0)})
+        .then( returnValue => {setRewardsAvailable(false); setRewardsAvailable(0)})
         .catch(error => console.log(error));
     }
 
