@@ -102,8 +102,8 @@ const AdamsSwap = () => {
       checkGorUser();
       
       // set token0 based on the value of swapGorToAdams
-      if(swapGorToAdams) setToken0(gorBalanceUser);
-      else setToken0(adamsBalanceUser);
+      // if(swapGorToAdams) setToken0(gorBalanceUser);
+      // else setToken0(adamsBalanceUser);
 
       // figure out if we've approved yet
       const checkAllowance = async () => {
@@ -203,13 +203,13 @@ const AdamsSwap = () => {
      * after swapping the amount of ADAMS shown in the UI.
      * @param shouldFormat true to format the value into an easily readible format, false to leave as is
      */
-    const getEstimatedGorForAdams = async (shouldFormat) => {
+    const getEstimatedGorForAdams = async (shouldFormat, ia) => {
       // getAmountOfTokens takes (uint256 inputAmount, uint256 inputReserve, uint256 outputReserve)
       // when swapping ADAMS for GOR we use the following values
       // inputAmount = amount of ADAMS we want to swap
       // inputReserve = ADAMS balance of Swap Contract
       // outputReserve = ETH balance of Swap Contract
-      const inputAmount = ethers.utils.parseEther(token0);
+      const inputAmount = ethers.utils.parseEther(ia);
       const inputReserve = ethers.utils.parseEther(adamsBalanceContract);
       const outputReserve = ethers.utils.parseEther(gorBalanceContract);
       const amountOfTokens = await adamsSwapContractProvider.getAmountOfTokens(inputAmount, inputReserve, outputReserve)
@@ -222,13 +222,13 @@ const AdamsSwap = () => {
      * after swapping the amount of GOR shown in the UI.
      * @param shouldFormat true to format the value into an easily readible format, false to leave as is
      */
-    const getEstimatedAdamsForGor = async (shouldFormat) => {
+    const getEstimatedAdamsForGor = async (shouldFormat, ia) => {
       // getAmountOfTokens takes (uint256 inputAmount, uint256 inputReserve, uint256 outputReserve)
       // when swapping GOR for ADAMS we use the following values
       // inputAmount = amount of ETH we want to swap
       // inputReserve = ETH balance of Swap Contract
       // outputReserve = ADAMS balance of Swap Contract
-      const inputAmount = ethers.utils.parseEther(token0);
+      const inputAmount = ethers.utils.parseEther(ia);
       const inputReserve = ethers.utils.parseEther(gorBalanceContract);
       const outputReserve = ethers.utils.parseEther(adamsBalanceContract);
       const amountOfTokens = await adamsSwapContractProvider.getAmountOfTokens(inputAmount, inputReserve, outputReserve)
@@ -238,17 +238,19 @@ const AdamsSwap = () => {
 
     /**
      * Updates the value of token1 to show the estimated amount of GOR / ADAMS received given the value of token0
+     * Note, we pass in token0Balance instead of reading from the state variable as it handles the case when state
+     * isn't updated in time.
      */
-    const setSwapResult = async () => {
+    const setSwapResult = async (token0Balance) => {
       // always check if we're connected before interacting with the contract
       if(signer) {
         if(swapGorToAdams) {
-          const gorForAdams = await getEstimatedAdamsForGor(true);
+          const gorForAdams = await getEstimatedAdamsForGor(true, token0Balance);
           setToken1(gorForAdams);
         }
         else {
           // first get estimated swap amount
-          const adamsForGor = await getEstimatedGorForAdams(true);
+          const adamsForGor = await getEstimatedGorForAdams(true, token0Balance);
           setToken1(adamsForGor);
         }
       }
@@ -265,7 +267,7 @@ const AdamsSwap = () => {
         return;
       }
       if(swapGorToAdams) {
-        const amountOfTokens = await getEstimatedAdamsForGor(false);
+        const amountOfTokens = await getEstimatedAdamsForGor(false, token0);
         
         await adamsSwapContractSigner.ethToAdams(amountOfTokens, { value: ethers.utils.parseEther(token0), gasLimit: 1000000 })
         .then( returnValue => {console.log("swap success ", returnValue)})
@@ -273,7 +275,8 @@ const AdamsSwap = () => {
       }
       else {
         // then swap
-        const amountOfTokens = await getEstimatedGorForAdams(false);
+        const amountOfTokens = await getEstimatedGorForAdams(false, token0);
+        console.log("SWAP adamsForGor ", amountOfTokens);
         console.log("SWAP adamsForGor amountOfTokens", ethers.utils.formatEther(amountOfTokens)); 
         console.log("SWAP adamsForGor token0", token0); 
         console.log("SWAP adamsForGor adamsSwapContractSigner", adamsSwapContractSigner); 
@@ -315,11 +318,13 @@ const AdamsSwap = () => {
 
       // first update the form values first as state seems to take time to update
       // note this seems backwards, but that's because we haven't updated the value of swapGorToAdams
-      if(swapGorToAdams) {
-        setToken0(adamsBalanceUser);
-        // in this case, we need to check if we have approved enough yet
-      }
-      else setToken0(gorBalanceUser);   
+      //  if(swapGorToAdams) {
+      //   setToken0(adamsBalanceUser);
+      //   // in this case, we need to check if we have approved enough yet
+      // }
+      // else setToken0(gorBalanceUser);   
+      // clear previous value of token0
+      setToken0(0);
 
       // then update  the UI
       setSwapGorToAdams(!swapGorToAdams);
@@ -367,15 +372,33 @@ const AdamsSwap = () => {
                         
                         <div className="flex flex-row justify-end mx-5 my-1">
                           {swapGorToAdams && (
-                            <h1 className="px-5 font-bold"><>GOR</> </h1>
+                            <>
+                              <h1 className="px-5 font-bold"><>GOR</> </h1>
+                              <div className="flex flex-col">
+                                <input type="number" id="token0" value={token0} onChange={(e) => {setToken0(e.target.value)}} onBlur={e => setSwapResult(e.target.value)} className="appearance-none border-[#d31a83] w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" />
+                                <p className="flex flex-row justify-end text-sm mr-2">Balance {gorBalanceUser}</p> 
+                                <p className="flex flex-row justify-end text-sm mr-2">Use &nbsp;
+                                <a className="underline decoration-[#d31a83]" href="#" onClick={e => {setToken0(gorBalanceUser/2); setSwapResult((gorBalanceUser/2).toString())}}>50%</a>&nbsp;|&nbsp; 
+                                <a className="underline decoration-[#d31a83]" href="#" onClick={e => {setToken0(gorBalanceUser); setSwapResult(gorBalanceUser)}}>100%</a></p> 
+                              </div>
+                            </>
                           )}
                            {!swapGorToAdams && (
-                            <h1 className="px-5 font-bold"><>ADAMS</> </h1>
+                            <>
+                              <h1 className="px-5 font-bold"><>ADAMS</> </h1>
+                              <div className="flex flex-col">
+                                <input type="number" id="token0" value={token0} onChange={(e) => {setToken0(e.target.value)}} onBlur={e => setSwapResult(e.target.value)} className="appearance-none border-[#d31a83] w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" />
+                                <p className="flex flex-row justify-end text-sm mr-2">Balance {adamsBalanceUser}</p> 
+                                <p className="flex flex-row justify-end text-sm mr-2">Use &nbsp;
+                                <a className="underline decoration-[#d31a83]" href="#" onClick={e => {setToken0(adamsBalanceUser/2); setSwapResult((adamsBalanceUser/2).toString())}}>50%</a>&nbsp;|&nbsp; 
+                                <a className="underline decoration-[#d31a83]" href="#" onClick={e => {setToken0(adamsBalanceUser); setSwapResult(adamsBalanceUser)}}>100%</a></p>
+                              </div>
+                            </>
                            )}
-                          <input type="number" id="token0" value={token0} onChange={(e) => {setToken0(e.target.value); setSwapResult();}} className="appearance-none border-[#d31a83] w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" />
+           
                         </div>
 
-                        <div className="flex flex-row justify-end mx-5 my-1">  
+                        <div className="flex flex-row justify-end mx-5 my-1 mt-5">  
                           {swapGorToAdams && (
                             <h1 className="px-5 font-bold">ADAMS</h1>
 
