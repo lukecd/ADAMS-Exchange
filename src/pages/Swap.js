@@ -355,8 +355,8 @@ const AdamsSwap = () => {
                   <h2 className='text-center mt-2 text-1xl font-bold opacity-80 bg-white text-black'>
                     Swap <a className="underline decoration-[#d31a83]" href="https://goerlifaucet.com/" rel="noreferrer" target="_blank">Goerli ETH</a> for ADAMS, pay the tax and see who gets it. Maybe you'll get it, maybe someone else will.
                     Hold on to your ADAMS, the more you have, the better your chance of winning the tax is.
-                    <p className="flex flex-row justify-end text-sm mr-2 mt-2">Swap GOR Balance: {gorBalanceContract}</p>
-                    <p className="flex flex-row justify-end text-sm mr-2">Swap ADAMS Balance: {adamsBalanceContract}</p>  
+                    <p className="flex flex-row justify-end text-sm mr-2 mt-2">Reserve GOR: {gorBalanceContract}</p>
+                    <p className="flex flex-row justify-end text-sm mr-2">Reserve ADAMS: {adamsBalanceContract}</p>  
                     <p className="flex flex-row justify-end text-sm mr-2">1 ADAMS = {gorBalanceContract / adamsBalanceContract} GOR</p>                                    
                     <p className="flex flex-row justify-end text-sm mr-2">1 ADAMS = {(gorBalanceContract / adamsBalanceContract) * ethPrice} USD</p>                                    
                   </h2>
@@ -441,3 +441,6 @@ const AdamsSwap = () => {
 };
 
 export default AdamsSwap;
+
+
+// 7724 + 2014n
