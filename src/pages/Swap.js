@@ -15,8 +15,8 @@ import ConnectWalletModal from "../components/ConnectWalletModal";
 import GeneralModal from "../components/GeneralModal";
 
 const AdamsSwap = () => {
-    const [token0, setToken0] = useState();
-    const [token1, setToken1] = useState();
+    const [token0, setToken0] = useState("");
+    const [token1, setToken1] = useState("");
     const [swapGorToAdams, setSwapGorToAdams] = useState(true);
     const [gorBalanceContract, setGorBalanceContract] = useState(0);
     const [adamsBalanceContract, setAdamsBalanceContract] = useState(0);
@@ -275,13 +275,14 @@ const AdamsSwap = () => {
       }
       else {
         // then swap
-        const amountOfTokens = await getEstimatedGorForAdams(false, token0);
+        console.log("SWAP adamsForGor ", token0);
+        const amountOfTokens = await getEstimatedGorForAdams(false, token0.toString());
         console.log("SWAP adamsForGor ", amountOfTokens);
         console.log("SWAP adamsForGor amountOfTokens", ethers.utils.formatEther(amountOfTokens)); 
         console.log("SWAP adamsForGor token0", token0); 
         console.log("SWAP adamsForGor adamsSwapContractSigner", adamsSwapContractSigner); 
 
-        await adamsSwapContractSigner.adamsToEth(ethers.utils.parseEther(token0), amountOfTokens, {gasLimit: 1000000})
+        await adamsSwapContractSigner.adamsToEth(ethers.utils.parseEther(token0.toString()), amountOfTokens, {gasLimit: 1000000})
         .then( returnValue => {console.log("swap success ", returnValue)})
         .catch(error => showModal("Umm ...", error.reason))
       }
