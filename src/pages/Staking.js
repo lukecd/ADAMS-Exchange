@@ -233,9 +233,11 @@ const Staking = () => {
                     <h1 className='text-4xl leading-10 font-bold inline underline decoration-[#d31a83]'>Staking!</h1>
                 
                 <h2 className='text-center mt-2 text-1xl font-bold opacity-80 bg-white text-black'>
-                  Stake your ADAMS to earn 42% APR.
-                  But you actually get more, because we continuously compound it for you. Go ahead stake some,
-                  who knows, you may earn enough for a nice meal at <a className="underline decoration-[#d31a83]" href="https://en.wikipedia.org/wiki/The_Restaurant_at_the_End_of_the_Universe" rel="noreferrer" target="_blank">The Restaurant At The End Of The Universe.</a>
+                  Stake your ADAMS to earn 42% APR ... or leave it unstaked and win tax rewards.
+                  Will you stake and stick with the know, or will you venture into the unknown? 
+                  Staking you earn 42% and then we top it off by continuously compounding it for you. 
+                  Rewards could earn you a lot more ... or could earn you nothing. It's a hard decision. 
+                  Who knows, you may earn enough for a nice meal at <a className="underline decoration-[#d31a83]" href="https://en.wikipedia.org/wiki/The_Restaurant_at_the_End_of_the_Universe" rel="noreferrer" target="_blank">The Restaurant At The End Of The Universe.</a>
                     <p className="flex flex-row justify-end text-sm mr-2 mt-2">Total Staked In Contract: {contractStaked}</p>
                 </h2>
               </div>
