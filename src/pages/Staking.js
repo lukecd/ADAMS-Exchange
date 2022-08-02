@@ -291,7 +291,7 @@ const Staking = () => {
               </div>
             </div>
         </div>
-        <Social />
+
     </div> 
     </>
     );

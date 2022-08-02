@@ -78,7 +78,6 @@ function sketch(p) {
          
     }
     p.windowResized = () => {
-        console.log("window resized")
         //p.resizeCanvas(p.createCanvas(window.screen.width, window.screen.height));
         sun.x = p.windowWidth / 2;
         sun.y = (p.windowHeight-250) / 2;

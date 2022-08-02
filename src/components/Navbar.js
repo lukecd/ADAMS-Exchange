@@ -47,6 +47,11 @@ const Navbar = () => {
                         rewards
                     </Link>
                 </li>
+                <li>
+                    <Link className='hover:bg-[#d31a83] hover:border-[#d31a83] text-white border-2 px-4 py-2 mx-1 rounded-sm' to="/about">
+                        about
+                    </Link>
+                </li>
             </ul>
             <div className='hidden lg:flex mr-10'>
                 <ConnectButton showBalance={false}/>
@@ -81,6 +86,11 @@ const Navbar = () => {
                 <li className='py-6 text-4xl'>
                      <Link onClick={handleClick} to="contact" to='/rewards'>
                         rewards
+                    </Link>
+                </li>
+                <li className='py-6 text-4xl'>
+                     <Link onClick={handleClick} to="contact" to='/about'>
+                        about
                     </Link>
                 </li>
                 <li>

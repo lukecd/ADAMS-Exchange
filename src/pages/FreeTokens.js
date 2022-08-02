@@ -167,7 +167,7 @@ const FreeTokens = () => {
                   </div>
                 </div>
             </div>
-            <Social />
+
         </div>
         </>
     );

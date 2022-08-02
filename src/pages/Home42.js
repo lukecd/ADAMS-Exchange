@@ -45,7 +45,7 @@ const Home42 = () => {
                 </div>
                 
             </div>
-            <Social />
+
         </div>
      
     )

@@ -8,6 +8,8 @@ import Swap from "./pages/Swap";
 import FreeTokens from "./pages/FreeTokens";
 import Staking from "./pages/Staking";
 import ClaimRewards from "./pages/ClaimRewards";
+import About from "./pages/About";
+
 import Navbar from "./components/Navbar";
 import Orbiter from "./components/Orbiter";
 
@@ -76,6 +78,7 @@ ReactDOM.render(
                         <Route path="/staking" element={<Staking />} />
                         <Route path="/swap" element={<Swap />} />
                         <Route path="/rewards" element={<ClaimRewards />} />
+                        <Route path="/about" element={<About />} />
                       </Routes>
                   </div>
               </div>

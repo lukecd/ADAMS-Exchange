@@ -166,7 +166,7 @@ const ClaimRewards = () => {
 
                 </div>
             </div>
-            <Social />
+ 
           </div> 
       </>
     );

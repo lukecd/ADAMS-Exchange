@@ -435,7 +435,7 @@ const AdamsSwap = () => {
                 </div>
               </div>
           </div>
-          <Social />
+     
       </div> 
       </>           
     );
